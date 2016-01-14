@@ -53,7 +53,18 @@
 
 
 on_load() ->
-    erlang:load_nif(progname(), []).
+    SoName = case code:priv_dir(?MODULE) of
+        {error, bad_name} ->
+            case filelib:is_dir(filename:join(["..", priv])) of
+                true ->
+                    filename:join(["..", priv, ?MODULE]);
+                _ ->
+                    filename:join([priv, ?MODULE])
+            end;
+        Dir ->
+            filename:join(Dir, ?MODULE)
+    end,
+    erlang:load_nif(SoName, 0).
 
 kill(Pid, Signal) when is_integer(Signal) ->
     kill_nif(Pid, Signal);
@@ -200,15 +211,3 @@ prio({user, N}) ->
 prio(N) when is_integer(N) ->
     {perc_prio:define(prio_process), N}.
 
-progname() ->
-    case code:priv_dir(?MODULE) of
-        {error,bad_name} ->
-            filename:join([
-                filename:dirname(code:which(?MODULE)),
-                    "..",
-                    "priv",
-                    ?MODULE
-                ]);
-        Dir ->
-            filename:join([Dir,?MODULE])
-    end.
