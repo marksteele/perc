@@ -1,5 +1,6 @@
 *.[oa]
 *.beam
 *.swp
-ebin/
 priv/
+_build
+rebar.lock
