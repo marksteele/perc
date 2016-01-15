@@ -4,3 +4,7 @@
 priv/
 _build
 rebar.lock
+ebin/*
+c_src/*.o
+c_src/*.d
+.rebar
